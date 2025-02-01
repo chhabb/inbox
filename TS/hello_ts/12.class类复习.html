@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+
+        class Point {
+            // 实例属性新写法，直接写在顶层，会添加到实例对象身上
+            _count = 0;
+
+            // 静态属性新写法
+            static prop2 = 'Point的第二个静态属性'
+
+            // 私有属性：只能在类的内部使用，外部（实例对象）使用会报错
+            // 私有属性的属性名必须包括#，如果不带#，会被当作另一个属性。
+            // 由于井号#是属性名的一部分，使用时必须带有#一起使用，所以#x和x是两个不同的属性。
+            #count = 0;
+
+            // 构造方法
+            // 1. 接收new调用时传递的参数
+            // 2. 通过new命令生成对象实例时，自动调用
+            // 3. 默认返回实例对象（即this）
+            constructor(x, y) {
+                // this代表实例对象
+                // 显示地向实例对象身上添加属性（也可以是方法），除此之外添加的属性和方法都会添加在类的prototype属性上
+                this.x = x;
+                this.y = y;
+
+
+            }
+
+            // 直接定义的方法，定义在类的prototype属性上，在类的实例上面调用方法，其实就是调用原型上的方法
+            toString() {
+                // this代表实例对象
+                return '(' + this.x + ', ' + this.y + ')';
+            }
+
+            // 顶层添加的实例的属性也可以通过this访问
+            increment() {
+                // 使用实例属性
+                this._count++;
+                // 使用私有属性
+                this.#count++;
+            }
+
+            // 在“类”的内部可以使用get和set关键字，对某个属性设置存值函数和取值函数，拦截该属性的存取行为。
+            get prop() {
+                return 'getter';
+            }
+            set prop(value) {
+                console.log('setter: ' + value);
+            }
+
+            // 私有属性也可以写get和set方法
+            get #x() { return this.#count; }
+            set #x(value) {
+                this.#count = value;
+            }
+
+
+            // 静态方法：使用static声明的方法无法被类的实例继承，只能通过类本身来调用
+            // 父类的静态方法，可以被子类继承
+            static classMethod() {
+                console.log('静态方法');
+                // 静态方法内部this指向调用该方法的类本身（可能是父类可能是子类），而不是实例对象，因此，静态方法可以与非静态方法重名（因为它们放在不同对象身上，不会被覆盖）
+                console.log(this === Point || this === Point1);
+            }
+
+            // 私有方法：只能在类内部使用的方法，写法和私有属性一致
+            #sum() {
+                console.log('私有方法');
+            }
+        }
+        // 类本质上就是函数
+        console.log(typeof Point);// "function"
+
+        // 类的显式原型默认是一个除了 constructor 属性的空对象
+        console.log(Point.prototype);
+        console.log(typeof Point.prototype); //显式原型也是对象
+
+        // constructor 属性指向类本身
+        console.log(Point === Point.prototype.constructor);// true
+
+        // 类的使用：直接对类使用new命令
+        const b = new Point(1, 2);
+        b.toString()
+        console.log(b);
+
+        // 实例b的constructor属性指向其构造函数，因此也指向其构造函数的显式原型的constructor属性
+        console.log(b.constructor === Point.prototype.constructor);
+
+        // 实例b的隐式原型指向其构造函数的显式原型
+        console.log(b.__proto__ === Point.prototype);
+        console.log(Point.prototype.constructor === Point.prototype.constructor);
+
+
+        // 类的所有实例共享一个原型对象
+        var p1 = new Point(2, 3);
+        var p2 = new Point(3, 2);
+
+        console.log(p1.__proto__ === p2.__proto__);
+
+
+        // 调用静态方法
+        Point.classMethod()
+
+        // 继承父类静态方法
+        class Point1 extends Point { }
+        Point1.classMethod()
+
+        // 静态属性：类本身的属性
+        Point.prop1 = 'Point的第一个静态属性'
+
+        console.log(Point.prop1, Point.prop2);
+
+    </script>
+</body>
+
+</html>

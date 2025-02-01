@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        // 子类通过extends关键字可以继承父类
+        /* 
+            在 JavaScript 的继承机制中，子类可以使用父类的一些资源，但并不是所有资源都可以直接访问和使用。具体来说：
+            -普通属性：子类可以继承和使用父类的普通属性。普通属性是在父类的构造函数中定义的，这些属性会通过 super() 调用在子类中初始化。子类可以直接访问和修改这些属性。
+            - 普通方法：子类可以继承和使用父类的普通方法。普通方法是定义在父类的 prototype 上的，子类会自动继承这些方法。子类可以直接调用这些方法，也可以通过重写来修改其行为。
+            - 静态方法：子类可以继承和使用父类的静态方法。静态方法是定义在类本身（而不是实例）上的，子类可以通过 SubClass.methodName() 的方式调用父类的静态方法。
+            - 静态属性：子类可以继承和使用父类的静态属性。静态属性与静态方法类似，定义在类本身上，子类可以通过 SubClass.propertyName 访问父类的静态属性。
+            - 私有属性和私有方法：子类不能直接访问父类的私有属性和私有方法。在 JavaScript 中，私有属性和方法是通过前缀 # 来定义的，它们是完全封装在类内部的，子类无法访问或继承。
+        */
+        class Point {
+            static sta1 = '第一个静态属性'
+            static sta2 = { name: "第二个静态属性" }
+            constructor(x, y) {
+                this.x = x
+                this.y = y
+            }
+
+            hello1() {
+                console.log('父类hello1方法');
+            }
+
+            static hello() {
+                console.log('父类静态方法');
+            }
+        }
+
+        class ColorPoint extends Point {
+            constructor(x, y, color) {
+                // super在这里表示父类的构造函数（即父类的constructor构造方法），用来新建一个父类的实例对象。
+                // 调用父类的constructor(x, y)为子类的实例对象添加来自于（继承自）父类的实例属性
+                super(x, y);
+                // 子类必须在constructor()方法中调用super()，否则就会报错
+                // 只有调用super()之后，才可以使用this关键字，否则会报错。
+                // 添加子类自己的实例属性
+                this.color = color;
+            }
+
+            toString() {
+                return this.color + ' ' + super.toString(); // 调用父类的toString()
+            }
+
+            // 重写父类方法
+            hello1() {
+                console.log('子类hello1方法');
+            }
+        }
+
+        // 调用父类静态方法
+        ColorPoint.hello()
+        
+
+        // 静态属性是通过浅拷贝实现继承的。
+        // 访问子类和父类基本类型静态属性
+        console.log(ColorPoint.sta1);
+        // 访问子类和父类引用类型静态属性
+        console.log(ColorPoint.sta2);
+
+        // 修改子类基本类型静态属性，不会影响父类
+        console.log(ColorPoint.sta1 = '子类第一个静态属性', Point.sta1);
+        // 修改子类引用类型静态属性，会影响父类
+        console.log(ColorPoint.sta2.name = "子类第二个静态属性", Point.sta2.name);
+        const son = new ColorPoint(1, 2, 3)
+        
+        // 重写父类方法
+        son.hello1()
+    </script>
+</body>
+
+</html>
